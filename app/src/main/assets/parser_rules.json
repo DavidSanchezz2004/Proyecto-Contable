@@ -3,59 +3,59 @@
     "fecha": "(\\d{4}[-/.]\\d{2}[-/.]\\d{2})",
     "hora": "((?:[01]?\\d|2[0-3]):[0-5]\\d(?:\\s?(?:a\\.m\\.|p\\.m\\.|AM|PM))?)",
     "importe": "((?:S/|PEN|USD)\\s*\\d+(?:[\\.,\\s]\\d{3})*(?:[\\.,]\\d{2})?)",
-    "nro_operacion": "(?i)(?:operaci[oó]n|op\\.?|nro\\.?|num\\.?)[^\\d]{0,6}(\\d{6,12})",
-    "ult4": "(\\d{4})(?!\\d)",
-    "ult4_origen": "",
+    "nro_operacion": "(?i)(?:operaci[oó]n|op\\.?|nro\\.?|num\\.?)[^\\d]{0,10}(\\d{6,12})",
+    "ult4": "(?i)(?:últimos?\\s*\\d+.*?|cuenta.*?destino.*?|destino.*?)(?:\\*{2,}|X{2,})?\\s*(\\d{4})",
+    "ult4_origen": "(?i)(?:cuenta.*?origen.*?|origen.*?)(?:\\*{2,}|X{2,})?\\s*(\\d{4})",
     "beneficiario": "(?i)(?:beneficiario|a nombre de|para)[:\\s]+([\\p{L}\\s\\.'\\-&]{3,60})",
-    "destino_block": "(?i)destino[^:]*[:：]\\s*\\*+\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-]{3,60})",
-    "origen_block":  "(?i)origen[^:]*[:：]\\s*\\*+\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-]{3,60})"
+    "destino_block": "(?i)(?:cuenta\\s*de\\s*destino|destino)[^:]*[:：]?\\s*(?:\\*{2,}|X{2,})?\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-&]{3,60})",
+    "origen_block": "(?i)(?:cuenta\\s*de\\s*origen|origen)[^:]*[:：]?\\s*(?:\\*{2,}|X{2,})?\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-&]{3,60})"
   },
 
   "bcp": {
     "fecha": "(\\d{4}-\\d{2}-\\d{2})",
     "hora": "((?:[01]?\\d|2[0-3]):[0-5]\\d)",
     "importe": "((?:PEN|USD)\\s*\\d+(?:[\\.,\\s]\\d{3})*(?:[\\.,]\\d{2})?|S/\\s*\\d+(?:[\\.,\\s]\\d{3})*(?:[\\.,]\\d{2})?)",
-    "nro_operacion": "(?i)(?:operaci[oó]n|op\\.?)[^\\d]{0,6}(\\d{6,12})",
-    "ult4": "(\\d{4})(?!\\d)",
-    "ult4_origen": "",
+    "nro_operacion": "(?i)(?:operaci[oó]n|op\\.?)[^\\d]{0,10}(\\d{6,12})",
+    "ult4": "(?i)(?:cuenta.*?destino.*?|últimos?\\s*\\d+.*?destino.*?)(?:\\*{2,}|X{2,})?\\s*(\\d{4})",
+    "ult4_origen": "(?i)(?:cuenta.*?origen.*?)(?:\\*{2,}|X{2,})?\\s*(\\d{4})",
     "beneficiario": "(?i)(?:beneficiario|a nombre de)[:\\s]+([\\p{L}\\s\\.'\\-&]{3,60})",
-    "destino_block": "(?i)cuenta\\s+de\\s+destino[^:]*[:：]\\s*\\*+\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-]{3,60})",
-    "origen_block":  "(?i)cuenta\\s+de\\s+origen[^:]*[:：]\\s*\\*+\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-]{3,60})"
+    "destino_block": "(?i)cuenta\\s+de\\s+destino[^:]*[:：]?\\s*(?:\\*{2,}|X{2,})?\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-&]{3,60})",
+    "origen_block": "(?i)cuenta\\s+de\\s+origen[^:]*[:：]?\\s*(?:\\*{2,}|X{2,})?\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-&]{3,60})"
   },
 
   "bbva": {
-    "fecha": "(\\d{1,2}\\s+[A-Za-zÁÉÍÓÚñ]+\\s+\\d{4})",
-    "hora": "((?:[01]?\\d):(\\d{2})\\s?(?:a\\.m\\.|p\\.m\\.|AM|PM))",
-    "importe": "(?:monto\\s+transferido\\s*[:：]\\s*)?((?:S/|PEN|USD)\\s*\\d+(?:[\\.,\\s]\\d{3})*(?:[\\.,]\\d{2})?)",
-    "nro_operacion": "(?i)n[uú]mero\\s+de\\s+operaci[oó]n[:\\s]+(\\d{6,12})",
-    "ult4": "(?i)cuenta\\s+de\\s+destino[^:]*[:：]\\s*\\*+\\s*(\\d{4})",
-    "ult4_origen": "(?i)cuenta\\s+de\\s+origen[^:]*[:：]\\s*\\*+\\s*(\\d{4})",
+    "fecha": "(?i)(?:[a-záéíóúñ]+,?\\s*)?(\\d{1,2})\\s+(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)\\s+(\\d{4})",
+    "hora": "((?:[01]?\\d|2[0-3]):(\\d{2})\\s?(?:a\\.m\\.|p\\.m\\.|AM|PM))",
+    "importe": "(?i)(?:monto\\s+transferido\\s*[:：]\\s*|s/\\s*)(\\d+(?:[\\.,]\\d{2})?)",
+    "nro_operacion": "(?i)(?:n[uú]mero\\s+de\\s+operaci[oó]n|operaci[oó]n)[:\\s]+(\\d{6,12})",
+    "ult4": "(?i)cuenta\\s*(?:de\\s*)?destino[^\\n]*?(?:\\*{2,})?\\s*(\\d{4})",
+    "ult4_origen": "(?i)cuenta\\s*(?:de\\s*)?origen[^\\n]*?(?:\\*{2,})?\\s*(\\d{4})",
     "beneficiario": "",
-    "destino_block": "(?i)cuenta\\s+de\\s+destino[^:]*[:：]\\s*\\*+\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-]{3,60})",
-    "origen_block":  "(?i)cuenta\\s+de\\s+origen[^:]*[:：]\\s*\\*+\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-]{3,60})"
+    "destino_block": "(?i)cuenta\\s*(?:de\\s*)?destino[^\\n]*?(?:\\*{2,})?\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-&\\.]{3,60})",
+    "origen_block": "(?i)cuenta\\s*(?:de\\s*)?origen[^\\n]*?(?:\\*{2,})?\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-&\\.]{3,60})"
   },
 
   "interbank": {
     "fecha": "(\\d{4}-\\d{2}-\\d{2})",
     "hora": "((?:[01]?\\d|2[0-3]):[0-5]\\d)",
     "importe": "((?:PEN|USD)\\s*\\d+(?:[\\.,\\s]\\d{3})*(?:[\\.,]\\d{2})?|S/\\s*\\d+(?:[\\.,\\s]\\d{3})*(?:[\\.,]\\d{2})?)",
-    "nro_operacion": "(?i)(?:operaci[oó]n|transacci[oó]n|op\\.?)[^\\d]{0,6}(\\d{6,12})",
+    "nro_operacion": "(?i)(?:operaci[oó]n|transacci[oó]n|op\\.?)[^\\d]{0,10}(\\d{6,12})",
     "ult4": "(\\d{4})(?!\\d)",
     "ult4_origen": "",
     "beneficiario": "(?i)(?:beneficiario|para)[:\\s]+([\\p{L}\\s\\.'\\-&]{3,60})",
     "destino_block": "(?i)cuenta\\s+de\\s+destino[^:]*[:：]\\s*\\*+\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-]{3,60})",
-    "origen_block":  "(?i)cuenta\\s+de\\s+origen[^:]*[:：]\\s*\\*+\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-]{3,60})"
+    "origen_block": "(?i)cuenta\\s+de\\s+origen[^:]*[:：]\\s*\\*+\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-]{3,60})"
   },
 
   "scotiabank": {
     "fecha": "(\\d{4}-\\d{2}-\\d{2})",
     "hora": "((?:[01]?\\d|2[0-3]):[0-5]\\d)",
     "importe": "((?:PEN|USD)\\s*\\d+(?:[\\.,\\s]\\d{3})*(?:[\\.,]\\d{2})?)",
-    "nro_operacion": "(?i)(?:operaci[oó]n|ref\\.?|op\\.?)[^\\d]{0,6}(\\d{6,12})",
+    "nro_operacion": "(?i)(?:operaci[oó]n|ref\\.?|op\\.?)[^\\d]{0,10}(\\d{6,12})",
     "ult4": "(\\d{4})(?!\\d)",
     "ult4_origen": "",
     "beneficiario": "(?i)(?:beneficiario|para)[:\\s]+([\\p{L}\\s\\.'\\-&]{3,60})",
     "destino_block": "(?i)cuenta\\s+de\\s+destino[^:]*[:：]\\s*\\*+\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-]{3,60})",
-    "origen_block":  "(?i)cuenta\\s+de\\s+origen[^:]*[:：]\\s*\\*+\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-]{3,60})"
+    "origen_block": "(?i)cuenta\\s+de\\s+origen[^:]*[:：]\\s*\\*+\\s*(\\d{4})\\s*([\\p{L}\\s\\.'\\-]{3,60})"
   }
 }

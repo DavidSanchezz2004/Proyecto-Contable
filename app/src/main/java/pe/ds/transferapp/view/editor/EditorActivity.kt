@@ -8,6 +8,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import pe.ds.transferapp.controller.TransferenciaController
 import pe.ds.transferapp.controller.TransferenciaController.CreateOrUpdateResult
 import pe.ds.transferapp.controller.TransferenciaController.DuplicateType
@@ -15,6 +16,7 @@ import pe.ds.transferapp.databinding.ActivityEditorBinding
 import pe.ds.transferapp.model.AppDatabase
 import pe.ds.transferapp.model.FormatUtils
 import pe.ds.transferapp.view.Confirm
+import pe.ds.transferapp.security.AuthGatePatternOrPin
 
 class EditorActivity : AppCompatActivity() {
 
@@ -61,6 +63,14 @@ class EditorActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             lifecycleScope.launch {
+                // 🔐 Patrón/PIN del dispositivo → fallback PIN de la app
+                val authOk = AuthGatePatternOrPin.requireAuth(
+                    this@EditorActivity,
+                    title = "Confirmar eliminación",
+                    subtitle = "Patrón/PIN del dispositivo o PIN de la app"
+                )
+                if (!authOk) return@launch
+
                 val ok = Confirm.confirmDelete(this@EditorActivity)
                 if (ok) {
                     val deleted = controller.deleteById(id)
@@ -99,6 +109,18 @@ class EditorActivity : AppCompatActivity() {
         binding.tilUlt4.editText?.setText(entity.cta_dest_ult4)
         binding.tilImporte.editText?.setText(entity.importe)
         binding.tilExtras.editText?.setText(entity.extras ?: "")
+
+        // Cargar datos de extras si existen
+        entity.extras?.let { extrasJson ->
+            try {
+                val extrasObj = JSONObject(extrasJson)
+                binding.tilTitularOrigen.editText?.setText(extrasObj.optString("titular_origen", ""))
+                binding.tilUlt4Origen.editText?.setText(extrasObj.optString("cta_origen_ult4", ""))
+            } catch (_: Exception) {
+                // Ignorar errores de JSON
+            }
+        }
+
         binding.btnDelete.isEnabled = true
     }
 
@@ -125,12 +147,14 @@ class EditorActivity : AppCompatActivity() {
         putIfNotNull(binding.tilImporte, intent.getStringExtra(EXTRA_IMPORTE))
         putIfNotNull(binding.tilExtras, intent.getStringExtra(EXTRA_EXTRAS))
         putIfNotNull(binding.tilTitularOrigen, intent.getStringExtra(EXTRA_TITULAR_ORIG))
+        putIfNotNull(binding.tilUlt4Origen, intent.getStringExtra(EXTRA_ULT4_ORIG))
     }
 
     private suspend fun saveOrUpdateFlow() {
         val titularOrigen = binding.tilTitularOrigen.editText?.text?.toString()?.trim()
+        val ult4Origen = binding.tilUlt4Origen.editText?.text?.toString()?.trim()
         val extrasInput = binding.tilExtras.editText?.text?.toString()?.trim()?.ifEmpty { null }
-        val extrasMerged = mergeExtras(extrasInput, titularOrigen)
+        val extrasMerged = mergeExtras(extrasInput, titularOrigen, ult4Origen)
 
         val form = TransferenciaController.TransferenciaForm(
             id = editingId,
@@ -152,6 +176,13 @@ class EditorActivity : AppCompatActivity() {
                 val strict = res.type is DuplicateType.PRIMARY
                 val ok = Confirm.confirmReplaceDuplicate(this, strict)
                 if (ok) {
+                    // 🔐 Patrón/PIN del dispositivo → fallback PIN de la app
+                    val authOk = AuthGatePatternOrPin.requireAuth(
+                        this@EditorActivity,
+                        title = "Reemplazar duplicado",
+                        subtitle = "Patrón/PIN del dispositivo o PIN de la app"
+                    )
+                    if (!authOk) return
                     val formReplace = form.copy(id = res.existing.id)
                     when (val res2 = controller.createOrUpdateFromForm(formReplace, replaceIfDuplicate = true)) {
                         is CreateOrUpdateResult.Success -> {
@@ -187,6 +218,25 @@ class EditorActivity : AppCompatActivity() {
         }
     }
 
+    private fun mergeExtras(existing: String?, titularOrigen: String?, ult4Origen: String?): String? {
+        val obj = try {
+            if (existing.isNullOrBlank()) JSONObject()
+            else JSONObject(existing)
+        } catch (_: Exception) {
+            JSONObject()
+        }
+
+        if (!titularOrigen.isNullOrBlank()) {
+            obj.put("titular_origen", titularOrigen)
+        }
+
+        if (!ult4Origen.isNullOrBlank()) {
+            obj.put("cta_origen_ult4", ult4Origen)
+        }
+
+        return if (obj.length() == 0) null else obj.toString()
+    }
+
     companion object {
         const val ARG_ID = "arg_id"
 
@@ -200,19 +250,6 @@ class EditorActivity : AppCompatActivity() {
         const val EXTRA_IMPORTE = "extra_importe"
         const val EXTRA_EXTRAS = "extra_extras"
         const val EXTRA_TITULAR_ORIG = "extra_titular_origen"
-
+        const val EXTRA_ULT4_ORIG = "extra_ult4_origen"
     }
-    private fun mergeExtras(existing: String?, titularOrigen: String?): String? {
-        val obj = try {
-            if (existing.isNullOrBlank()) org.json.JSONObject()
-            else org.json.JSONObject(existing)
-        } catch (_: Exception) {
-            org.json.JSONObject()
-        }
-        if (!titularOrigen.isNullOrBlank()) {
-            obj.put("titular_origen", titularOrigen)
-        }
-        return if (obj.length() == 0) null else obj.toString()
-    }
-
 }

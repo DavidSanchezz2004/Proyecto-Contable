@@ -13,6 +13,13 @@
         <activity android:name=".view.list.ListActivity" />
         <activity android:name=".view.editor.EditorActivity" />
         <activity android:name=".view.importer.ImportActivity" />
+        <activity
+            android:name="pe.ds.transferapp.view.export.ExportActivity"
+            android:exported="false" />
+        <activity
+            android:name="pe.ds.transferapp.security.PinActivity"
+            android:exported="false"/>
+
 
 
 

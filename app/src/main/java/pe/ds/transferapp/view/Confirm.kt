@@ -29,11 +29,29 @@ object Confirm {
         text = "Podrás restaurarlo desde la Papelera."
     )
 
-    suspend fun confirmExport(context: Context, count: Int): Boolean = confirmWarning(
-        context,
-        title = "¿Exportar $count registro(s) a Excel?",
-        text = "Se generará el archivo y se marcarán como exportados."
-    )
+    suspend fun confirmExport(context: Context, count: Int): Boolean =
+        suspendCancellableCoroutine { cont ->
+            SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("¿Exportar $count registro(s) a Excel?")
+                .setContentText("Se generará el archivo y se marcarán como exportados.")
+                .setConfirmText("Confirmar")
+                .setCancelText("Cancelar")
+                .setConfirmClickListener { dlg ->
+                    dlg.changeAlertType(SweetAlertDialog.SUCCESS_TYPE)
+                    dlg.titleText = "Confirmado"
+                    dlg.contentText = "Iniciando exportación…"
+                    dlg.setConfirmClickListener { d2 ->
+                        d2.dismissWithAnimation()
+                        if (!cont.isCompleted) cont.resume(true) {}
+                    }
+                }
+                .setCancelClickListener { dlg ->
+                    dlg.dismissWithAnimation()
+                    if (!cont.isCompleted) cont.resume(false) {}
+                }
+                .show()
+        }
+
 
     suspend fun confirmReplaceDuplicate(context: Context, strict: Boolean): Boolean {
         val title = if (strict) "Duplicado detectado" else "Posible duplicado"

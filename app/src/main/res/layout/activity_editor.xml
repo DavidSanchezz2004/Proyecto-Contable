@@ -4,13 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <LinearLayout
         android:orientation="vertical"
         android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- Campos básicos -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilFecha"
             android:layout_width="match_parent"
@@ -58,12 +58,24 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Sección de Cuenta de Destino -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="CUENTA DE DESTINO"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="8dp"/>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilBeneficiario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Beneficiario"
-            android:layout_marginTop="8dp">
+            android:hint="Beneficiario / Titular"
+            android:layout_marginTop="4dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:inputType="textPersonName"
                 android:layout_width="match_parent"
@@ -74,7 +86,7 @@
             android:id="@+id/tilUlt4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Últimos 4 de cuenta destino"
+            android:hint="Últimos 4 dígitos"
             android:layout_marginTop="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:inputType="number"
@@ -83,12 +95,50 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Sección de Cuenta de Origen -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="CUENTA DE ORIGEN"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="8dp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilTitularOrigen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Titular de origen (opcional)"
+            android:layout_marginTop="4dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:inputType="textPersonName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilUlt4Origen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Últimos 4 dígitos origen (opcional)"
+            android:layout_marginTop="8dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:inputType="number"
+                android:maxLength="4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Otros campos -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilImporte"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Importe (PEN 921.88)"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="16dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:inputType="text"
                 android:layout_width="match_parent"
@@ -108,19 +158,18 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Botones -->
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp">
-
+            android:layout_marginTop="24dp">
             <Button
                 android:id="@+id/btnSave"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Guardar"/>
-
             <Button
                 android:id="@+id/btnDelete"
                 android:layout_width="0dp"
@@ -129,20 +178,6 @@
                 android:text="Eliminar"
                 android:layout_marginStart="12dp"/>
         </LinearLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilTitularOrigen"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Titular de cuenta de origen (opcional)">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
 
     </LinearLayout>
 </ScrollView>

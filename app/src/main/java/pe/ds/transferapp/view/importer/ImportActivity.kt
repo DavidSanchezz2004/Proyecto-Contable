@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import pe.ds.transferapp.controller.OcrController
 import pe.ds.transferapp.controller.ParserController
 import pe.ds.transferapp.databinding.ActivityImportBinding
@@ -107,6 +108,8 @@ class ImportActivity : AppCompatActivity() {
                 ocr.recognizeFromUri(uri!!)
             }
 
+            Log.d("ImportActivity", "Texto OCR completo: ${ocrRes.fullText}")
+
             if (ocrRes.fullText.isBlank()) {
                 Confirm.showError(this, "ERROR", "No se detectó texto en la imagen/PDF.")
                 return
@@ -115,6 +118,17 @@ class ImportActivity : AppCompatActivity() {
             val parser = ParserController(this)
             val parsed = parser.parse(ocrRes.fullText)
 
+            // Extraer ULT4 origen de extras
+            var ult4Origen: String? = null
+            parsed.extrasJson?.let { extrasJson ->
+                try {
+                    val extrasObj = JSONObject(extrasJson)
+                    ult4Origen = extrasObj.optString("cta_origen_ult4", null)
+                } catch (e: Exception) {
+                    Log.e("ImportActivity", "Error parsing extras JSON", e)
+                }
+            }
+
             // Muestra resumen y abre editor
             val resumen = buildString {
                 append("Banco: ").append(parsed.banco.value ?: "-").append('\n')
@@ -122,7 +136,9 @@ class ImportActivity : AppCompatActivity() {
                 append("Hora: ").append(parsed.hora.value ?: "-").append('\n')
                 append("Operación: ").append(parsed.nroOperacion.value ?: "-").append('\n')
                 append("Beneficiario: ").append(parsed.beneficiario.value ?: "-").append('\n')
-                append("Últimos 4: ").append(parsed.ult4.value ?: "-").append('\n')
+                append("ULT4 Destino: ").append(parsed.ult4.value ?: "-").append('\n')
+                append("ULT4 Origen: ").append(ult4Origen ?: "-").append('\n')
+                append("Titular Origen: ").append(parsed.titularOrigen ?: "-").append('\n')
                 append("Importe: ").append(parsed.importe.value ?: "-")
             }
 
@@ -130,7 +146,7 @@ class ImportActivity : AppCompatActivity() {
 
             // Ir al editor con autollenado
             startActivity(
-                android.content.Intent(this, EditorActivity::class.java).apply {
+                Intent(this, EditorActivity::class.java).apply {
                     putExtra(EditorActivity.EXTRA_PREFILL, true)
                     putExtra(EditorActivity.EXTRA_FECHA, parsed.fecha.value)
                     putExtra(EditorActivity.EXTRA_HORA, parsed.hora.value)
@@ -140,6 +156,8 @@ class ImportActivity : AppCompatActivity() {
                     putExtra(EditorActivity.EXTRA_ULT4, parsed.ult4.value)
                     putExtra(EditorActivity.EXTRA_IMPORTE, parsed.importe.value)
                     putExtra(EditorActivity.EXTRA_EXTRAS, parsed.extrasJson)
+                    putExtra(EditorActivity.EXTRA_TITULAR_ORIG, parsed.titularOrigen)
+                    putExtra(EditorActivity.EXTRA_ULT4_ORIG, ult4Origen)
                 }
             )
         } catch (e: Exception) {
